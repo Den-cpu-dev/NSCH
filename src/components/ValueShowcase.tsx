@@ -1,9 +1,8 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Heart, Plane } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { BRAND, REVIEWERS, SHOWCASE } from "@/lib/data";
 
@@ -27,13 +26,27 @@ function CompassMark() {
 }
 
 export function ValueShowcase() {
-  const [index, setIndex] = useState(0);
-  const places = SHOWCASE.map((_, i) => SHOWCASE[(i + index) % SHOWCASE.length]);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const scroll = (direction: "left" | "right") => {
+    if (!scrollRef.current) return;
+    const offset = direction === "left" ? -250 : 250;
+    scrollRef.current.scrollBy({ left: offset, behavior: "smooth" });
+  };
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const { scrollLeft } = scrollRef.current;
+    const itemWidth = 230;
+    const newIndex = Math.round(scrollLeft / itemWidth);
+    setActiveIndex(Math.min(Math.max(newIndex, 0), SHOWCASE.length - 1));
+  };
 
   return (
-    <section id="about" className="mx-auto max-w-6xl px-6 pb-8 pt-16 md:pt-20">
-      <div className="flex flex-col items-center">
-        <div className="flex items-center gap-3 text-sm text-neutral-600">
+    <section id="about" className="mx-auto max-w-6xl px-4 sm:px-6 pb-8 pt-14 md:pt-20">
+      <div className="flex flex-col items-center text-center">
+        <div className="flex items-center gap-3 text-xs sm:text-sm text-neutral-600">
           <span className="inline-flex items-center gap-1.5">
             <Heart className="h-3.5 w-3.5 fill-sky-600 text-sky-600" />
             We are NSCH
@@ -56,7 +69,7 @@ export function ValueShowcase() {
           </span>
         </div>
 
-        <h2 className="font-display mt-6 max-w-xl text-center text-4xl font-semibold leading-[1.1] tracking-tight text-neutral-950 md:text-6xl">
+        <h2 className="font-display mt-6 max-w-xl text-center text-3xl font-semibold leading-[1.1] tracking-tight text-neutral-950 sm:text-4xl md:text-6xl">
           {BRAND.shortName ?? BRAND.name} means
           <br />
           Going Places
@@ -64,12 +77,12 @@ export function ValueShowcase() {
         <CompassMark />
       </div>
 
-      <div className="mt-14 grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr]">
+      <div className="mt-12 sm:mt-14 grid items-center gap-8 sm:gap-10 lg:grid-cols-[0.85fr_1.15fr]">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-neutral-500">
             • 01 Our Value
           </p>
-          <h3 className="font-display mt-4 max-w-xs text-3xl font-semibold leading-tight md:text-4xl">
+          <h3 className="font-display mt-4 max-w-xs text-2xl sm:text-3xl font-semibold leading-tight md:text-4xl">
             Not Your Boring Travel Agent
           </h3>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-neutral-500">
@@ -77,53 +90,63 @@ export function ValueShowcase() {
             retreats, cliff walks, and boutique stays designed to feel like an
             editorial, not a checklist.
           </p>
-          <Button className="mt-8" asChild>
+          <Button className="mt-6 sm:mt-8 w-full sm:w-auto" asChild>
             <a href="#contact">Book a Seat</a>
           </Button>
         </div>
 
-        <div>
-          <div className="flex items-end gap-4 overflow-x-auto pb-4 md:overflow-visible">
-            <AnimatePresence mode="popLayout">
-              {places.map((place, i) => (
-                <motion.article
-                  key={`${place.id}-${index}`}
-                  layout
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -16 }}
-                  transition={{ duration: 0.35, delay: i * 0.06 }}
-                  className={`${place.sizeClass} ${place.offsetClass} relative shrink-0 overflow-hidden rounded-3xl`}
-                >
-                  <Image
-                    src={place.image}
-                    alt={place.title || "NSCH Showcase"}
-                    fill
-                    className="object-cover"
-                    sizes="240px"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-                </motion.article>
-              ))}
-            </AnimatePresence>
+        <div className="min-w-0 w-full overflow-hidden">
+          <div
+            ref={scrollRef}
+            onScroll={handleScroll}
+            className="-mx-4 sm:mx-0 px-4 sm:px-0 flex items-center gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory py-4 touch-pan-x [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {SHOWCASE.map((place) => (
+              <article
+                key={place.id}
+                className={`shrink-0 snap-start overflow-hidden rounded-3xl relative transition-transform duration-300 hover:scale-[1.02] shadow-sm ${place.sizeClass} ${place.offsetClass} w-[210px] sm:w-[230px] md:w-[240px]`}
+              >
+                <Image
+                  src={place.image}
+                  alt={place.title || "NSCH Showcase"}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 240px, 280px"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+              </article>
+            ))}
           </div>
-          <div className="mt-4 flex items-center justify-end gap-2 text-xs text-neutral-500">
-            <button
-              type="button"
-              onClick={() =>
-                setIndex((v) => (v - 1 + SHOWCASE.length) % SHOWCASE.length)
-              }
-              className="inline-flex items-center gap-1 rounded-full border border-neutral-200 px-3 py-1.5 hover:bg-white"
-            >
-              <ChevronLeft className="h-3 w-3" /> Prev
-            </button>
-            <button
-              type="button"
-              onClick={() => setIndex((v) => (v + 1) % SHOWCASE.length)}
-              className="inline-flex items-center gap-1 rounded-full border border-neutral-200 px-3 py-1.5 hover:bg-white"
-            >
-              Next <ChevronRight className="h-3 w-3" />
-            </button>
+
+          <div className="mt-4 flex items-center justify-between sm:justify-end gap-3 text-xs text-neutral-500">
+            <div className="flex items-center gap-1.5 sm:hidden">
+              {SHOWCASE.map((_, i) => (
+                <span
+                  key={i}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    i === activeIndex ? "w-5 bg-neutral-900" : "w-1.5 bg-neutral-300"
+                  }`}
+                />
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => scroll("left")}
+                aria-label="Previous slide"
+                className="inline-flex items-center gap-1 rounded-full border border-neutral-200 px-3.5 py-2 sm:py-1.5 text-xs font-medium hover:bg-neutral-50 active:scale-95 transition-all"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" /> Prev
+              </button>
+              <button
+                type="button"
+                onClick={() => scroll("right")}
+                aria-label="Next slide"
+                className="inline-flex items-center gap-1 rounded-full border border-neutral-200 px-3.5 py-2 sm:py-1.5 text-xs font-medium hover:bg-neutral-50 active:scale-95 transition-all"
+              >
+                Next <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
           </div>
         </div>
       </div>

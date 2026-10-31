@@ -23,7 +23,7 @@ export function HeroSection({
   return (
     <section id="top" className="relative px-3 pt-3 md:px-5 md:pt-4">
       <div className="relative overflow-hidden rounded-[28px] md:rounded-[36px]">
-        <div className="relative h-[85vh] min-h-[600px] w-full">
+        <div className="relative h-[82vh] min-h-[540px] md:h-[85vh] md:min-h-[600px] w-full">
           <Image
             src={HERO_IMAGE}
             alt="Golden steppe with yurts beneath snow-capped mountains"
@@ -32,17 +32,17 @@ export function HeroSection({
             className="object-cover object-center"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-white/10 to-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/65" />
           <Header
             onSearchFocus={() =>
               searchRef.current?.scrollIntoView({ behavior: "smooth" })
             }
           />
-          <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-            <h1 className="font-display text-8xl font-bold leading-none tracking-tight text-[#D4AF37] md:text-9xl lg:text-[11rem] drop-shadow-md">
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-4 sm:px-6 text-center">
+            <h1 className="font-display text-7xl font-extrabold leading-none tracking-tight text-[#D4AF37] sm:text-8xl md:text-9xl lg:text-[11rem] drop-shadow-[0_3px_12px_rgba(0,0,0,0.6)]">
               Travel
             </h1>
-            <p className="mt-6 max-w-lg text-base font-semibold leading-relaxed text-neutral-950 md:text-xl drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]">
+            <p className="mt-4 sm:mt-6 max-w-lg text-sm sm:text-base md:text-xl font-medium leading-relaxed text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.85)]">
               Travel with intention: Discover retreats, active adventures, and
               boutique stays all in one place.
             </p>

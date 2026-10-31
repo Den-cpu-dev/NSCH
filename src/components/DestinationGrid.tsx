@@ -155,7 +155,7 @@ export function DestinationGrid({ filters, onChange }: DestinationGridProps) {
   return (
     <section
       id="destinations"
-      className="mx-auto max-w-6xl px-6 pb-24 pt-8 md:pt-4"
+      className="mx-auto max-w-6xl px-4 sm:px-6 pb-20 sm:pb-24 pt-6 md:pt-4"
     >
       <p className="text-xs font-medium uppercase tracking-[0.18em] text-neutral-400">
         • Popular Destination 2026
